@@ -1,0 +1,54 @@
+This project shows a basic analytics of a given user's twitter account, like most popular hashtags, most commonly used phrases, and tweet frequency, all in a visual manner.
+
+The project was made to demonstrate a basic understanding of using Hadoop and it's components, and in displaying the data in a visual form. 
+
+PREREQUISITE
+
+Hadoop, Hive,  rcongiu Hive-JSON-Serde , Eclipse, JFreeChart for Eclipse
+
+1. Hadoop, Hive must be installed and configured in the system.
+	
+	Configuration steps are given in the ReferenceGuides
+
+2. Eclipse must be configured properly to run Hadoop programs properly.
+
+	Add all Jar files present in the CommonJar directory to your Eclipse project (mentioned later as well).
+
+3. Download and build HIVE-JSON Serde via
+
+	wget http://www.datanucleus.org/downloads/maven2/javax/jdo/jdo2-api/2.3-ec/jdo2-api-2.3-ec.jar
+	mvn install:install-file -DgroupId=javax.jdo -DartifactId=jdo2-api \
+  		-Dversion=2.3-ec -Dpackaging=jar -Dfile=jdo2-api-2.3-ec.jar
+	mvn package
+
+
+USAGE INSTRUCTIONS
+
+
+1. Run Hadoop on the system
+
+	$ start-all.sh
+
+2. Start MySQL server
+	
+	$ sudo /etc/init.d/mysql start
+
+3. Start HiveServer2
+	
+	$ hive --service hiveserver2
+
+
+4. Create table, and add data by running the HiveQL commands present in the Dev_Platforms directory, at the Hive prompt.
+
+
+5. Create a new project in Eclipse using the java files provided in the Dev_Platforms folder
+
+
+6. Add all external jars provided in the Common Jar folder for your newly created project.
+
+
+7. Run the program GUI.java
+
+
+You should be greeted with a screen which would allow you to choose the neccessary options as per the program's functionality.
+

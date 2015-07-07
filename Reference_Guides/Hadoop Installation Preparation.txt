@@ -1,0 +1,218 @@
+Configuration Guide by : Amrit Chhetri, IT Consultant, IT Security Consultant/Architect
+--------------------------------------------------------------------------------------------------
+1. Install and Configure Sun JDK on Ubuntu 14.04 or 12.04:
+-----------------------------------------------------------
+	1. Remove openJDK, #sudo apt-get purge openjdk-7-jre*.  
+	2. Download JDK 1.7 inside /home/java. Untar jdk file ,# tar zxf jdk-7u76-linux-i586_1.tar
+	3. Configure Java in /etc/profile or ./bahsrc . #sudo su gedit /etc/profile and restart the system
+	   JAVA_HOME=/home/java/jdk1.7_08
+       PATH=$PATH:$JAVA_HOME/bin
+       JRE_HOME=$JAVA_HOME/lib
+       CLASSPATH=$JAVA_HOME/lib
+       export JAVA_HOME
+       export PATH
+       export JRE_HOME
+       export CLASSPATH	   
+	4. Check JRE #java -version
+	5. Write one java code and compile it , javac File.java
+	6. Run java code, #java File
+	
+2. Install and Configure Eclipse IDE on Ubuntu 14.04 or 12.04: :
+-------------------------------------------------------------
+	1. Download and untar Eclipse inside /home/eclipse, # tar zxf eclipse-java-luna-SR2-linux-gtk.tar
+	2. Run eclipse/eclipse excutable to run Eclipse. If does not run, copy jre folder inside /eclipse folder.
+	3. Install PyDev Plugin for Python. Help-> Install New Software-> Add url, http://pydev.org/updates
+	4. Install Hadoop Plugin too.
+	5. Configure PYTHON path. Windows->Preferences->PyDev-> Python Interpreter->Select Python interpreter.
+	6. Generally it is /usr/bin/python
+	(If it complains about JRE, copy JRE inside /eclipse folder)
+
+3. Download and install Hadoop :
+------------------------------
+	1. Update Repository:
+	$ sudo add-apt-repository "deb http://archive.canonical.com/lucid partner"
+
+	2. Update the source list
+	$ sudo apt-get update
+	  sudo apt-get install ssh
+
+	3. Install Sun Java 7:
+	$ sudo apt-get install sun-java7-jdk
+	$ sudo update-java-alternatives -s java-7-sun	
+	
+	4. Adding hadoop user
+	$  sudo addgroup hadoop
+	$  sudo adduser --ingroup hadoop hadoop
+
+	5. Adding SSH Key to hadoop user:
+	$  su - hadoop
+	$  ssh-keygen -t rsa -P ""
+		 
+	6. Enable SSH:
+	   $ cat ~/.ssh/id_dsa.pub >>~/.ssh/authorized_keys
+	   $ ssh localhost
+       	(It is required Distributed Installation)
+
+	7. Disable IPV6:
+	   Open  /etc/sysctl.conf and comment for IPzv6
+	   net.ipv6.conf.all.disable_ipv6 = 1
+	   net.ipv6.conf.default.disable_ipv6 = 1
+	   net.ipv6.conf.lo.disable_ipv6 = 1
+
+	8. Check IPV 6:
+	   $ cat /proc/sys/net/ipv6/conf/all/disable_ipv6 ( 0 means enabled, 1 means disabled)
+	   
+	9. Installing Hadoop:
+		Download hadoop tar file, hadoop-2.7.0.tar
+		$ sudo tar xzf hadoop-0.20.2.tar.gz
+		$ sudo mv hadoop-0.20.2 /opt
+
+	10. Configuring Hadoop:
+		A.Update JAVA_HOME inside /conf/hadoop-env.sh
+		export JAVA_HOME=/usr/lib/jvm/java-6-sun
+		B.Path Configurations inside etc/profile or ./bashrc
+		export HADOOP_HOME=/opt/hadoop-0.20.2
+		export PATH=$HADOOP_HOME/bin:${PATH}
+   
+	11. Formatting named node:
+		#/opt/hadoop-0.20.2$ bin/hadoop namenode -format
+
+	12. Starting single node cluster:
+		$/bin/start-all.sh
+
+	13. Checking Haddoop instance:
+		$sudo netstat -plten | grep java
+
+	14. Stopping Single Node Cluster:
+		$/bin/stop-all.sh
+		
+	15. Check for :
+     	http://localhost:54310
+	    	http://localhost:50030
+		http://localhost:50060
+		http://localhost:50070 (Hadoop services on your Browser)
+		http://localhost:8088/ (Application for Cluster)
+	
+	( More on http://www.bogotobogo.com/Hadoop/BigData_hadoop_Install_on_ubuntu_single_node_cluster.php
+or hadoop.apache.org/common/docs/current/quickstart.html)
+
+4. Writing Hadoop Programs(MapReduce from Eclipse):
+	1. Download Hadoop Plugin for Eclipse, hadoop-eclipse.jar 
+	2. Copy jars (hadoop-eclipse.jar, all three) inside /eclipse/plugins directory.
+	3. Restart Eclipse and Untar hadoop2.6.0.tar.gzfgg
+	4. File->New->Other->MapReduce Project-> select hadoop home directory.
+	5. Configure hadoop-common.jar(share/hadoop/common folder), if it reports any error.
+	6. Create Mapper ( create package & copy all from SampleCode inside newly created package,say,smit.hoo)
+	7. Create Reducer
+	8. Create Driver for MapReduce Job
+	9. Export all three as .jar and load it inside Hadoop Node.
+	10. Supply Input and Outputs
+	11. Run Job
+
+
+5. Running Hadoop Jobs -Single Node:
+	1.  Create jar of the project using Eclipse Export option
+	2.  Switch to hduser : sudo su hduser
+	3.  Go to Hadoop conf : cd /usr/local/hadoop/etc/hadoop
+	4.  Delete temporary folders :
+		sudo rm -R /app/*
+		sudo rm -R /tmp/*
+	5.  Format  namenode :  hadoop namenode -format  
+	6.  Start all daemons : start-dfs.sh && start-yarn.sh
+	7.  Check for Datanodes, NameNode :/home/jdk1.7_08/bin/jps
+	8.  Create HDFS Directory : hadoop dfs -mkdir -p /usr/local/hadoop/input
+	9.  Copy Inputs Files to HDFS File System:  hadoop dfs -copyFromLocal /home/cse/sample.txt /usr/local/hadoop/input
+	10. Run MapReduce Job: hadoop jar HadoopMapReduceJob.jar /usr/local/hadoop/input /usr/local/hadoop/output
+	11. Viewing Results :   hdfs dfs -cat /usr/local/hadoop/output/part-r-00000   or  
+							hdfs dfs -cat /usr/local/hadoop/output/part-00000 					
+							
+
+6. Pydoop installation on Ubuntu 14.04( Install dependencies first):
+	1. 	sudo apt-get update
+	2. 	sudo apt-get install python-pip 
+	3.	pip install pydoop		
+		pip install argparse
+		pip install importlib
+	or Downalod pydoop.zip and untar it and run $python install.py
+	(http://www.drdobbs.com/database/pydoop-writing-hadoop-programs-in-python/240156473?pgno=2)
+	OR
+	1. Download setuptools from Github,setuptools-17.1.1.tar
+	2. Unzip it and run $ python setup install
+	3. Install Hadoop( HADOOP_HOME is must)
+	4. Download Pydoop from Github, pydoop-develop
+	5. Unzip it and run $ python nsetup install
+	6. Write sample code and tes it! 
+	
+	
+7. Ping Installation :
+	1. Configure Hadoop and make it running (HADOOP_HOME is important) 
+	2. Downalod Pig and untar it 
+	3. Put pig on path with /home/pig0.0.4/bin 
+	4. Check it by running pig 
+	5. Run in Grunt, pig -x local ping -x madpreduce 
+	6. Ready to go
+
+
+8. Hive Installation :
+	1. User downloaded apache-hive-1.2.0-bin.tar.gz or downalod it from 
+	2. Unzip or untar it and move to /usr/local/hive
+	3. In ~/bashrc or etc/profile make following entries:
+	   	export HIVE_HOME=/usr/local/hive
+		export PATH=$PATH:$HIVE_HOME/bin
+		export CLASSPATH=$CLASSPATH:/usr/local/Hadoop/lib/*:.
+		export CLASSPATH=$CLASSPATH:/usr/local/hive/lib/*:.
+	4. cd $HIVE_HOME/conf and $HIVE_HOME/conf $cp hive-env.sh.template hive-env.sh
+	5. Add export HADOOP_HOME=/usr/local/hadoop to hive-env.sh
+	6. Get Derby Database from http://archive.apache.org/dist/db/derby/db-derby-10.4.2.0/db-derby-	10.4.2.0-bin.tar.gz
+	7. Untar Derby and move to /usr/local/Derby using mv db-derby-10.4.2.0-bin /usr/local/derby
+	8. In ~/.bashrc or /etc/profile add following
+		export DERBY_HOME=/usr/local/derby
+		export PATH=$PATH:$DERBY_HOME/bin
+		export CLASSPATH=$CLASSPATH:$DERBY_HOME/lib/derby.jar:$DERBY_HOME/lib/derbytools.jar
+	9.  mkdir $DERBY_HOME/data
+	10. Configuring Metastore for Hive:
+		$ cd $HIVE_HOME/conf
+		$ cp hive-default.xml.template hive-site.xml
+	11. Edit hive-site.xml and make following entries:
+		<property>
+   		<name>javax.jdo.option.ConnectionURL</name>
+   		<value>jdbc:derby://localhost:1527/metastore_db;create=true </value>
+   		<description>JDBC connect string for a JDBC metastore </description>
+		</property>
+	12. Create jpox.properties with following entries:
+	      javax.jdo.PersistenceManagerFactoryClass =
+		org.jpox.PersistenceManagerFactoryImpl
+		org.jpox.autoCreateSchema = false
+		org.jpox.validateTables = false
+		org.jpox.validateColumns = false
+		org.jpox.validateConstraints = false
+		org.jpox.storeManagerType = rdbms
+		org.jpox.autoCreateSchema = true
+		org.jpox.autoStartMechanismMode = checked
+		org.jpox.transactionIsolation = read_committed
+		javax.jdo.option.DetachAllOnCommit = true
+		javax.jdo.option.NontransactionalRead = true
+		javax.jdo.option.ConnectionDriverName = org.apache.derby.jdbc.ClientDriver
+		javax.jdo.option.ConnectionURL = jdbc:derby://hadoop1:1527/metastore_db;create = true
+		javax.jdo.option.ConnectionUserName = APP
+		javax.jdo.option.ConnectionPassword = mine
+	13. Create HDFS Directories:
+		$ HADOOP_HOME/bin/hadoop fs -mkdir /tmp 
+		$HADOOP_HOME/bin/hadoop fs -mkdir /user/hive/warehouse
+		$HADOOP_HOME/bin/hadoop fs -chmod g+w /tmp 
+		$HADOOP_HOME/bin/hadoop fs -chmod g+w /user/hive/warehouse
+	14. $ cd $HIVE_HOME/bin/hive
+	15. It gives hive>
+	16. tyoe hive> show databases; to check the installation
+		
+
+    (http://www.tutorialspoint.com/hive/hive_installation.htm)
+9. HBASE Installation:
+	1. 
+
+10. MRJobs Installation :
+	 1. Use mrjob-master.zip or downlaod it from GitHub
+	 2. Unzip it and run python setup.py install
+      3. Create PyDev Project and a sample code
+11. 
+
